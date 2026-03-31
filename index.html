@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#163257">
-<title>The Rich Life — Monthly Report</title>
+<meta name="theme-color" content="#163458">
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<title>The Rich Life Academy — Monthly Report</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
-  --navy:#163257;--navy2:#1e3f6b;
+  --navy:#163458;--navy2:#1e4070;
   --bg:#f4f6f9;--card:#fff;
   --text:#162a47;--t2:#4a6080;--t3:#8a9db5;
   --border:rgba(22,50,87,0.12);--bm:rgba(22,50,87,0.22);
@@ -30,7 +32,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1.25rem;background:var(--navy)}
 .auth-card{background:var(--card);border-radius:var(--rl);padding:2rem 1.75rem;width:100%;max-width:400px}
 .trl-logo{display:flex;align-items:center;gap:12px;margin-bottom:1.75rem}
-.trl-badge{background:var(--navy);color:#fff;border-radius:8px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;letter-spacing:.04em;flex-shrink:0}
+.trl-badge{border-radius:8px;width:46px;height:46px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.trl-badge img{width:46px;height:46px;object-fit:cover;border-radius:8px}
 .trl-org{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--navy)}
 .trl-sub{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em}
 .auth-heading{font-size:22px;font-weight:600;margin-bottom:6px}
@@ -57,7 +60,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* Topbar */
 .topbar{background:var(--navy);padding:.85rem 1.25rem;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
-.tb-trl{background:rgba(255,255,255,0.15);color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;border-radius:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-trl{border-radius:6px;width:36px;height:36px;overflow:hidden;flex-shrink:0}
+.tb-trl img{width:36px;height:36px;object-fit:cover;border-radius:6px}
 .tb-brand{flex:1}
 .tb-name{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.9)}
 .tb-sub{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.04em}
@@ -240,9 +244,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .edit-btn{margin-left:auto;background:none;border:0.5px solid var(--bm);border-radius:var(--r);padding:4px 12px;font-size:12px;color:var(--t3);cursor:pointer}
 .signout-btn{background:none;border:none;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;padding:0}
 .signout-btn:hover{color:#fff}
+
+  /* ── Update banner ── */
+  .update-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: var(--navy); color: #fff;
+    padding: 12px 1.25rem;
+    display: flex; align-items: center; gap: 12px;
+    transform: translateY(-100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.26, 0.64, 1);
+    box-shadow: 0 4px 24px rgba(22,52,88,0.25);
+  }
+  .update-banner.visible { transform: translateY(0); }
+  .update-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #4ade80; flex-shrink: 0;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .6; transform: scale(1.3); }
+  }
+  .update-msg { flex: 1; font-size: 14px; font-weight: 500; }
+  .update-msg span { font-size: 12px; opacity: .7; font-weight: 400; margin-left: 6px; }
+  .update-reload {
+    background: #fff; color: var(--navy);
+    border: none; border-radius: var(--r);
+    padding: 7px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+  .update-reload:hover { opacity: .9; }
+  .update-dismiss {
+    background: none; border: none;
+    color: rgba(255,255,255,0.5); font-size: 18px;
+    cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0;
+  }
+  .update-dismiss:hover { color: #fff; }
+
 </style>
 </head>
 <body>
+
+<div class="update-banner" id="update-banner">
+  <span class="update-dot"></span>
+  <span class="update-msg">
+    A new version is available
+    <span>Refresh to get the latest updates</span>
+  </span>
+  <button class="update-reload" onclick="window.location.reload(true)">Refresh now</button>
+  <button class="update-dismiss" onclick="dismissUpdate()" title="Dismiss">&times;</button>
+</div>
 
 <!-- ══════════════════════════════════════════
      LOGIN SCREEN
@@ -251,8 +302,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="trl-logo">
-      <div class="trl-badge">TRL</div>
-      <div><div class="trl-org">The Rich Life</div><div class="trl-sub">Herbalife Squad</div></div>
+      <div class="trl-badge"><img src="assets/logo-square.png" alt="The Rich Life" /></div>
+      <div><div class="trl-org">The Rich Life Academy</div><div class="trl-sub">Herbalife Squad</div></div>
     </div>
     <div class="auth-heading">Sign in</div>
     <div class="auth-sub">Sign in to submit your monthly numbers.</div>
@@ -272,8 +323,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="trl-logo">
-      <div class="trl-badge">TRL</div>
-      <div><div class="trl-org">The Rich Life</div><div class="trl-sub">Herbalife Squad</div></div>
+      <div class="trl-badge"><img src="assets/logo-square.png" alt="The Rich Life" /></div>
+      <div><div class="trl-org">The Rich Life Academy</div><div class="trl-sub">Herbalife Squad</div></div>
     </div>
     <div class="auth-heading">Reset password</div>
     <div class="auth-sub">Enter your email and we'll send you a reset link.</div>
@@ -293,8 +344,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="trl-logo">
-      <div class="trl-badge">TRL</div>
-      <div><div class="trl-org">The Rich Life</div><div class="trl-sub">Herbalife Squad</div></div>
+      <div class="trl-badge"><img src="assets/logo-square.png" alt="The Rich Life" /></div>
+      <div><div class="trl-org">The Rich Life Academy</div><div class="trl-sub">Herbalife Squad</div></div>
     </div>
     <div class="auth-heading">Create your password</div>
     <div class="auth-sub">Welcome to The Rich Life team! Set a password to finish creating your account.</div>
@@ -312,7 +363,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="wiz-over" id="wiz-over" style="display:none">
   <div class="wiz-card">
     <div class="trl-logo" style="margin-bottom:1.25rem">
-      <div class="trl-badge">TRL</div>
+      <div class="trl-badge"><img src="assets/logo-square.png" alt="The Rich Life" /></div>
       <div><div class="trl-org">The Rich Life</div><div class="trl-sub">Monthly Report</div></div>
     </div>
     <div class="wiz-step on" id="wz-1">
@@ -363,8 +414,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 ══════════════════════════════════════════════ -->
 <div id="s-form" class="screen">
   <div class="topbar">
-    <div class="tb-trl">TRL</div>
-    <div class="tb-brand"><div class="tb-name">The Rich Life</div><div class="tb-sub">Herbalife Squad</div></div>
+    <div class="tb-trl"><img src="assets/logo-square.png" alt="TRL" /></div>
+    <div class="tb-brand"><div class="tb-name">The Rich Life Academy</div><div class="tb-sub">Herbalife Squad</div></div>
     <span class="tb-title">Monthly Report</span>
     <div class="tb-actions">
       <button class="tb-btn" id="tb-hist" onclick="toggleHistory()">History</button>
@@ -432,8 +483,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 ══════════════════════════════════════════════ -->
 <div id="s-dash" class="screen">
   <div class="topbar">
-    <div class="tb-trl">TRL</div>
-    <div class="tb-brand"><div class="tb-name">The Rich Life</div><div class="tb-sub">Herbalife Squad</div></div>
+    <div class="tb-trl"><img src="assets/logo-square.png" alt="TRL" /></div>
+    <div class="tb-brand"><div class="tb-name">The Rich Life Academy</div><div class="tb-sub">Herbalife Squad</div></div>
     <span class="tb-title">Dashboard</span>
     <div class="tb-actions">
       <button class="tb-btn" onclick="refreshDash()">Refresh</button>
@@ -467,8 +518,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 ══════════════════════════════════════════════ -->
 <div id="s-admin" class="screen">
   <div class="topbar">
-    <div class="tb-trl">TRL</div>
-    <div class="tb-brand"><div class="tb-name">The Rich Life</div><div class="tb-sub">Herbalife Squad</div></div>
+    <div class="tb-trl"><img src="assets/logo-square.png" alt="TRL" /></div>
+    <div class="tb-brand"><div class="tb-name">The Rich Life Academy</div><div class="tb-sub">Herbalife Squad</div></div>
     <span class="tb-title">Admin</span>
     <div class="tb-actions">
       <button class="tb-btn" onclick="showScreen('form')">← Back</button>
@@ -1068,6 +1119,45 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
 // Enter key on login
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ── Update detection (hash check every 10s) ───────────────────
+let _initHash = null;
+let _updateDismissed = false;
+
+async function hashContent(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function initUpdateChecker() {
+  try {
+    const res = await fetch(window.location.href + '?_=' + Date.now(), {cache: 'no-store'});
+    const text = await res.text();
+    _initHash = await hashContent(text);
+    setInterval(checkForUpdate, 10000);
+  } catch { /* silent fail — offline or dev */ }
+}
+
+async function checkForUpdate() {
+  if (_updateDismissed) return;
+  try {
+    const res = await fetch(window.location.href + '?_=' + Date.now(), {cache: 'no-store'});
+    if (!res.ok) return;
+    const text = await res.text();
+    const newHash = await hashContent(text);
+    if (_initHash && newHash !== _initHash) {
+      document.getElementById('update-banner').classList.add('visible');
+    }
+  } catch { /* silent fail */ }
+}
+
+function dismissUpdate() {
+  _updateDismissed = true;
+  document.getElementById('update-banner').classList.remove('visible');
+}
+
+initUpdateChecker();
+
 </script>
 </body>
 </html>
